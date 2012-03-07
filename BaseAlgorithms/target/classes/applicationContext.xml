@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    <context:annotation-config/>
+
+    <!-- GRAPH FACTORY -->
+    <bean id="graphRepresentationFactory" class="services.factory.GraphRepresentationFactory">
+        <property name="graphDAO" ref="graphDAO"/>
+    </bean>
+
+    <!-- DAO -->
+    <bean id="graphDAO" class="dao.GraphDAOImpl">
+        <constructor-arg name="fileLocation" value="src/main/test/resources/testAdjacencyMatrix.txt"/>
+    </bean>
+    <bean id="tasksDAO" class="dao.TasksDAOImpl">
+        <constructor-arg name="fileLocation" value="src/main/test/resources/testTasks.txt"/>
+    </bean>
+
+    <!-- HOLDERS -->
+    <bean id="tasksHolder" class="domain.input.TasksHolder">
+        <property name="tasksDAO" ref="tasksDAO"/>
+    </bean>
+
+    <!-- SCHEDULE -->
+    <bean id="scheduler" class="services.scheduler.ReadyTasksScheduler" />
+
+    <!-- FITNESS FUNCTIONS -->
+    <bean id="individualFitnessFunction" class="services.fitness.SimpleIndividualFitnessFunction"/>
+
+    <!-- HASH FUNCTIONS -->
+    <bean id="hashFunction" class="services.hash.HashFunctionServiceImpl"/>
+
+    <!-- Cache -->
+    <bean id="tasksPool" class="domain.ga.TasksPool"/>
+
+    <!-- Aspects -->
+    <aop:aspectj-autoproxy/>
+
+    <bean id="loggingAspect" class="aspects.LoggingAspect"/>
+
+    <bean id="profileAspect" class="aspects.ProfileAspect"/>
+
+
+</beans>

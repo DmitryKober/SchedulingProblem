@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    <bean id="graphRepresentationFactory" class="services.factory.GraphRepresentationFactory">
+        <property name="graphDAO" ref="graphDAO"/>
+    </bean>
+
+    <!-- ===================== DAO =====================-->
+    <bean id="graphDAO" class="dao.GraphDAOImpl">
+        <constructor-arg name="fileLocation" value="src/main/test/resources/testAdjacencyMatrix.txt"/>
+    </bean>
+
+     <bean id="tasksDAO" class="dao.TasksDAOImpl">
+        <constructor-arg name="fileLocation" value="src/main/test/resources/testTasks.txt"/>
+    </bean>
+    <!-- ================================================-->
+
+    <bean id="tasksHolder" class="domain.input.TasksHolder">
+        <property name="tasksDAO" ref="tasksDAO"/>
+    </bean>
+
+    <bean id="hashFunctionService" class="services.hash.HashFunctionServiceImpl"/>
+
+    <bean id="individual" class="domain.ga.Individual">
+        <constructor-arg name="identifier" value="1"/>
+        <constructor-arg name="processorsNumber" value="2"/>
+        <property name="schedule" ref="schedule"/>
+    </bean>
+    <bean id="schedule" class="domain.ga.Schedule">
+         <constructor-arg name="processorsNumber" value="2"/>
+    </bean>
+    <bean id="scheduler" class="services.scheduler.ReadyTasksScheduler">
+        <property name="individual" ref="individual"/>
+    </bean>
+
+    <!--
+    <bean id="customScheduleBuilder" class="custom_schedule.CustomScheduleBuilderImpl">
+        <constructor-arg value="2"/>
+    </bean> -->
+
+    <bean id="tasksDAOTest" class='unit_tests.TasksDAOTest'>
+        <property name="tasksDAO" ref="tasksDAO"/>
+    </bean>
+
+    <!-- Aspects -->
+    <aop:aspectj-autoproxy/>
+
+    <bean id="loggingAspect" class="aspects.LoggingAspect"/>
+
+    <bean id="profileAspect" class="aspects.ProfileAspect"/>
+
+</beans>
